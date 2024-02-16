@@ -12,7 +12,6 @@ export default function Signup() {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
   };
-  console.log(formData);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,6 +19,7 @@ export default function Signup() {
       return setErrorMessage("Please fill out all fields");
     }
     try {
+      console.log(formData);
       setLoading(true);
       setErrorMessage(null);
       const res = await fetch("api/auth/signup", {

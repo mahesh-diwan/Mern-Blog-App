@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 
 export const signup = async (req, res, next) => {
   const { username, email, password } = req.body;
+  console.log(req.body);
 
   // Check if any required field is missing or empty
   if (
@@ -17,7 +18,6 @@ export const signup = async (req, res, next) => {
   ) {
     return next(errorHandler(400, "All fields are required"));
   }
-
   try {
     // Hash the password asynchronously
     const hashedPassword = await bcryptjs.hashSync(password, 10);
@@ -34,6 +34,7 @@ export const signup = async (req, res, next) => {
 
     // Send success response
     res.json({ message: "Signup successful" });
+    console.log('Signup successful');
   } catch (error) {
     // Pass any error to the error handling middleware
     next(error);
