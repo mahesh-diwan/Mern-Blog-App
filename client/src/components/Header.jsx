@@ -3,15 +3,15 @@ import { Navbar, TextInput, Button, Dropdown, Avatar } from "flowbite-react";
 import { Link, useLocation } from "react-router-dom";
 import { AiOutlineSearch } from "react-icons/ai";
 import { FaMoon, FaSun } from "react-icons/fa";
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from "react-redux";
 import { CiMail, CiUser } from "react-icons/ci";
 import { toggleTheme } from "../redux/theme/themeSlice.mjs";
 
 export default function Header() {
   const path = useLocation().pathname;
   const dispatch = useDispatch();
-  const { currentUser } = useSelector(state => state.user)
-  const { theme } = useSelector(state => state.theme);
+  const { currentUser } = useSelector((state) => state.user);
+  const { theme } = useSelector((state) => state.theme);
   return (
     <Navbar className="border-b-2">
       <Link
@@ -36,41 +36,46 @@ export default function Header() {
       </Button>
 
       <div className="flex gap-2 md:order-2">
-        <Button className="w-12 h-10 lg:inline" color="gray" pill 
-        onClick={() => dispatch(toggleTheme())}>
-          { theme === 'light' ? <FaSun/> : <FaMoon/>}
+        <Button
+          className="w-12 h-10 lg:inline"
+          color="gray"
+          pill
+          onClick={() => dispatch(toggleTheme())}
+        >
+          {theme === "light" ? <FaSun /> : <FaMoon />}
         </Button>
-        { currentUser ? (
+        {currentUser ? (
           <Dropdown
-          arrowIcon={false}
-          inline
-          label={
-            <Avatar 
-            alt="User" 
-            img={currentUser.profilePicture}
-            rounded
-            />
-          }
+            arrowIcon={false}
+            inline
+            label={
+              <Avatar alt="User" img={currentUser.profilePicture} rounded />
+            }
           >
             <Dropdown.Header>
-              <span className="flex text-sm m-auto"><CiUser className="h-5 w-5 mr-2"/>{currentUser.username}</span>
-              <hr className="my-2"/>
-              <span className="flex text-sm m-auto font-medium"><CiMail className="h-5 w-5 mr-2"/>{currentUser.email}</span>
+              <span className="flex text-sm m-auto">
+                <CiUser className="h-5 w-5 mr-2" />
+                {currentUser.username}
+              </span>
+              <hr className="my-2" />
+              <span className="flex text-sm m-auto font-medium">
+                <CiMail className="h-5 w-5 mr-2" />
+                {currentUser.email}
+              </span>
             </Dropdown.Header>
-            <Dropdown.Item>
-              <Link to='/dashboard?tab=profile'>Profile</Link>
-            </Dropdown.Item>
-            <Dropdown.Divider/>
+            <Link to="/dashboard?tab=profile">
+              <Dropdown.Item>Profile</Dropdown.Item>
+            </Link>
+            <Dropdown.Divider />
             <Dropdown.Item>Sign Out</Dropdown.Item>
           </Dropdown>
-        ) :
-        (
+        ) : (
           <Link to="/signin">
-          <Button gradientDuoTone="purpleToBlue" outline>
-            Sign In
-          </Button>
-        </Link>
-        ) }
+            <Button gradientDuoTone="purpleToBlue" outline>
+              Sign In
+            </Button>
+          </Link>
+        )}
         <Navbar.Toggle />
       </div>
       <Navbar.Collapse>
