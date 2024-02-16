@@ -19,7 +19,6 @@ export default function Signup() {
       return setErrorMessage("Please fill out all fields");
     }
     try {
-      console.log(formData);
       setLoading(true);
       setErrorMessage(null);
       const res = await fetch("api/auth/signup", {

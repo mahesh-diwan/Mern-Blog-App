@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
     },
     profilePicture: {
         type: String,
-        default: "https://www.shutterstock.com/image-vector/user-profile-icon-vector-avatar-person-2220431045"
+        default: "https://cdn0.iconfinder.com/data/icons/fintech-solutions-solid-24/24/account_user_profile_person_avatar-512.png"
     }
  }, {timestamps: true}
 )
