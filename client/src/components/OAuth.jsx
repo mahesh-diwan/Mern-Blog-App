@@ -4,7 +4,7 @@ import { AiFillGoogleCircle } from "react-icons/ai";
 import { GoogleAuthProvider, signInWithPopup, getAuth } from "firebase/auth";
 import { app } from "../firebase.mjs";
 import { useDispatch } from "react-redux";
-import { signInSuccess } from "../redux/user/userSlice.mjs";
+import { signInFailure, signInSuccess } from "../redux/user/userSlice.mjs";
 import { useNavigate } from "react-router-dom";
 
 export default function OAuth() {
@@ -29,11 +29,12 @@ export default function OAuth() {
       const data = await res.json();
 
       if (res.ok) {
-        dispatch(signInSuccess(data));
+        dispatch(signInSuccess());
         navigate("/");
       }
     } catch (error) {
       console.error(error);
+      dispatch(signInFailure());
     }
   };
   return (
