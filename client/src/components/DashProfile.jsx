@@ -20,9 +20,10 @@ import {
   deleteUserFailure,
   signoutSuccess,
 } from "../redux/user/userSlice.mjs";
+import { Link } from "react-router-dom";
 
 export default function DashProfile() {
-  const { currentUser, error } = useSelector((state) => state.user);
+  const { currentUser, error, loading } = useSelector((state) => state.user);
   const [imageFile, setImageFile] = useState(null);
   const [imageFileurl, setImageFileurl] = useState(null);
   const [formData, setFormData] = useState({});
@@ -227,9 +228,21 @@ export default function DashProfile() {
           placeholder="Password"
           onChange={handleChange}
         />
-        <Button type="submit" gradientDuoTone={"purpleToBlue"} outline>
-          Update
+        <Button
+          type="submit"
+          gradientDuoTone={"purpleToBlue"}
+          outline
+          disabled={loading || imageFileUploading}
+        >
+          { loading ? "Loading..." : "Update"}
         </Button>
+        {currentUser.isAdmin && (
+          <Link to={"/create-post"}>
+            <Button type="button" gradientDuoTone="purpleToPink" className="w-full">
+              Create Post
+            </Button>
+          </Link>
+        )}
       </form>
       <div className="flex justify-between text-red-500 mt-5">
         <span className="cursor-pointer" onClick={() => setShowModal(true)}>
