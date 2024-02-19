@@ -40,7 +40,7 @@ export default function DashSidebar() {
     }
   };
   return (
-    <div className="md:h-screen">
+    <div className="h-full">
       <Sidebar className="w-full">
         <Sidebar.Items>
           <Sidebar.ItemGroup className="flex flex-col gap-1">
