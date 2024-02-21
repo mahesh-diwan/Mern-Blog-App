@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Button, Modal, Table } from "flowbite-react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
-import { FaCheck, FaTimes} from 'react-icons/fa'
+import { FaCheck, FaTimes } from "react-icons/fa";
 import "../../public/stylesheets/spinner.css";
 
 export default function DashUsers() {
@@ -57,20 +57,16 @@ export default function DashUsers() {
   const handleDeleteUser = async () => {
     setShowModal(false);
     try {
-      const res = await fetch(
-        `/api/user/delete-user/${userIdToDelete}/${currentUser._id}`,
-        {
-          method: "DELETE",
-        }
-      );
+      const res = await fetch(`/api/user/delete/${userIdToDelete}`, {
+        method: "DELETE",
+      });
       const data = await res.json();
 
       if (!res.ok) {
         console.error(data.message);
       } else {
-        setUserPosts((prev) =>
-          prev.filter((post) => post._id !== postIdToDelete)
-        );
+        setUsers((prev) => prev.filter((user) => user._id !== userIdToDelete));
+        setShowModal(false);
       }
     } catch (error) {
       console.log(error);
@@ -104,7 +100,13 @@ export default function DashUsers() {
                   </Table.Cell>
                   <Table.Cell>{user.username}</Table.Cell>
                   <Table.Cell>{user.email}</Table.Cell>
-                  <Table.Cell>{user.isAdmin ? (<FaCheck className="text-green-500"/>) : (<FaTimes className="text-red-500"/>)}</Table.Cell>
+                  <Table.Cell>
+                    {user.isAdmin ? (
+                      <FaCheck className="text-green-500" />
+                    ) : (
+                      <FaTimes className="text-red-500" />
+                    )}
+                  </Table.Cell>
                   <Table.Cell>
                     <span
                       className="font-medium text-red-500 hover:underline cursor-pointer"
