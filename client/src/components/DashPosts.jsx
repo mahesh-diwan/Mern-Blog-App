@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { Button, Modal, Table } from "flowbite-react";
 import { Link } from "react-router-dom";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
+import  '../../public/stylesheets/spinner.css';
 
 export default function DashPosts() {
   const { currentUser } = useSelector((state) => state.user);
@@ -10,7 +11,9 @@ export default function DashPosts() {
   const [showmore, setShowmore] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [postIdToDelete, setPostIdToDelete] = useState(null);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
+    setLoading(true);
     const fetchPosts = async () => {
       try {
         const res = await fetch(`/api/post/get-post?userId=${currentUser._id}`);
@@ -22,7 +25,9 @@ export default function DashPosts() {
             setShowmore(false);
           }
         }
+        setLoading(false);
       } catch (error) {
+        setLoading(false);
         console.log(error.message);
       }
     };
@@ -32,6 +37,7 @@ export default function DashPosts() {
   }, [currentUser._id]);
 
   const handleShowMore = async () => {
+    setLoading(true);
     const startIndex = userPosts.length;
     try {
       const res = await fetch(
@@ -44,7 +50,9 @@ export default function DashPosts() {
           setShowmore(false);
         }
       }
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   };
@@ -73,7 +81,7 @@ export default function DashPosts() {
   };
   return (
     <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
-      {currentUser.isAdmin && userPosts.length > 0 ? (
+      {currentUser.isAdmin && userPosts.length > 0 && (
         <>
           <Table hoverable className="shadow-md">
             <Table.Head>
@@ -142,8 +150,6 @@ export default function DashPosts() {
             </button>
           )}
         </>
-      ) : (
-        <p>No posts is available</p>
       )}
 
       <Modal
@@ -170,6 +176,9 @@ export default function DashPosts() {
           </div>
         </Modal.Body>
       </Modal>
+      {loading && (
+        <div className="spinner"></div>
+      )}
     </div>
   );
 }
