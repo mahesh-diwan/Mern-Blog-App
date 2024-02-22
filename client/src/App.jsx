@@ -12,6 +12,7 @@ import PrivateRoute from './components/PrivateRoute'
 import CreatePost from './pages/CreatePost'
 import OnlyAdminPrivateRoute from './components/OnlyAdminPrivateRoute'
 import UpdatePost from './pages/UpdatePost'
+import PostPage from './pages/PostPage'
 
 export default function App() {
   return (
@@ -30,6 +31,7 @@ export default function App() {
         </Route>
         <Route path='/signup' element={<Signup/>}/>
         <Route path='/signin' element={<Signin/>}/>
+        <Route path='/post/:postSlug' element={<PostPage/>}/>
       </Routes>
     <Footer/>
     </BrowserRouter>

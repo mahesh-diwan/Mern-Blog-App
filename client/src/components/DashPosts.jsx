@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { Button, Modal, Table } from "flowbite-react";
 import { Link } from "react-router-dom";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
-import  '../../public/stylesheets/spinner.css';
+import "../../public/stylesheets/spinner.css";
 
 export default function DashPosts() {
   const { currentUser } = useSelector((state) => state.user);
@@ -96,48 +96,48 @@ export default function DashPosts() {
             </Table.Head>
             {userPosts.map((post) => (
               <Table.Body key={post._id} className="divide-y">
-                <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                  <Table.Cell>
-                    {new Date(post.updatedAt).toLocaleDateString()}
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Link to={`/post/${post.slug}`}>
-                      <img
-                        src={post.image}
-                        alt={post.title}
-                        className="w-20 h-10 object-cover bg-gray-500"
-                      />
-                    </Link>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Link
-                      className="font-medium text-gray-900 dark:text-white"
-                      to={`/post/${post.slug}`}
-                    >
-                      {post.title}
-                    </Link>
-                  </Table.Cell>
-                  <Table.Cell>{post.category}</Table.Cell>
-                  <Table.Cell>
-                    <span
-                      className="font-medium text-red-500 hover:underline cursor-pointer"
-                      onClick={() => {
-                        setShowModal(true);
-                        setPostIdToDelete(post._id);
-                      }}
-                    >
-                      Delete
-                    </span>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Link
-                      className="font-medium text-teal-500 hover:underline cursor-pointer"
-                      to={`/update-post/${post._id}`}
-                    >
-                      <span>Edit</span>
-                    </Link>
-                  </Table.Cell>
-                </Table.Row>
+                  <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                    <Table.Cell>
+                      {new Date(post.updatedAt).toLocaleDateString()}
+                    </Table.Cell>
+                    <Table.Cell>
+                      <Link to={`/post/${post.slug}`}>
+                        <img
+                          src={post.image}
+                          alt={post.title}
+                          className="w-20 h-10 object-cover bg-gray-500"
+                        />
+                      </Link>
+                    </Table.Cell>
+                    <Table.Cell>
+                      <Link
+                        className="font-medium text-gray-900 dark:text-white"
+                        to={`/post/${post.slug}`}
+                      >
+                        {post.title}
+                      </Link>
+                    </Table.Cell>
+                    <Table.Cell>{post.category}</Table.Cell>
+                    <Table.Cell>
+                      <span
+                        className="font-medium text-red-500 hover:underline cursor-pointer"
+                        onClick={() => {
+                          setShowModal(true);
+                          setPostIdToDelete(post._id);
+                        }}
+                      >
+                        Delete
+                      </span>
+                    </Table.Cell>
+                    <Table.Cell>
+                      <Link
+                        className="font-medium text-teal-500 hover:underline cursor-pointer"
+                        to={`/update-post/${post._id}`}
+                      >
+                        <span>Edit</span>
+                      </Link>
+                    </Table.Cell>
+                  </Table.Row>
               </Table.Body>
             ))}
           </Table>
@@ -176,9 +176,7 @@ export default function DashPosts() {
           </div>
         </Modal.Body>
       </Modal>
-      {loading && (
-        <div className="spinner"></div>
-      )}
+      {loading && <div className="spinner"></div>}
     </div>
   );
 }
