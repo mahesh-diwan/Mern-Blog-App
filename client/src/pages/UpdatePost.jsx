@@ -114,7 +114,9 @@ export default function UpdatePost() {
   return (
     <>
       {loading ? (
-        <div className="spinner mx-auto my-60"></div>
+        <div className="flex justify-center items-center min-h-screen">
+          <div class="spinner"></div>
+        </div>
       ) : (
         <div className="p-3 max-w-3xl mx-auto min-h-screen">
           <h1 className="text-center text-3xl my-7 font-semibold">

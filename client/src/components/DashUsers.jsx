@@ -157,7 +157,11 @@ export default function DashUsers() {
           </div>
         </Modal.Body>
       </Modal>
-      {loading && <div className="spinner"></div>}
+      {loading && (
+        <div className="flex justify-center items-center min-h-screen">
+          <div class="spinner"></div>
+        </div>
+      )}
     </div>
   );
 }
