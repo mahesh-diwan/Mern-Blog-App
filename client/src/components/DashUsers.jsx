@@ -100,11 +100,11 @@ export default function DashUsers() {
                   </Table.Cell>
                   <Table.Cell>{user.username}</Table.Cell>
                   <Table.Cell>{user.email}</Table.Cell>
-                  <Table.Cell>
+                  <Table.Cell className="">
                     {user.isAdmin ? (
-                      <FaCheck className="text-green-500" />
+                      <FaCheck className="text-green-500 mx-auto" />
                     ) : (
-                      <FaTimes className="text-red-500" />
+                      <FaTimes className="text-red-500 mx-auto" />
                     )}
                   </Table.Cell>
                   <Table.Cell>

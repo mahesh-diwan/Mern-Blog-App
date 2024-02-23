@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import userRoutes from "./routes/user.route.mjs";
 import authRoutes from "./routes/auth.route.mjs";
 import postRoutes from './routes/post.route.mjs'
+import commentRoutes from './routes/comment.route.mjs'
 import cookieParser from "cookie-parser";
 
 dotenv.config();
@@ -30,6 +31,7 @@ app.listen(port, () => {
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/post", postRoutes);
+app.use("/api/comment", commentRoutes);
 
 //Middleware for error messages
 app.use((err, req, res, next) => {
