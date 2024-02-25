@@ -99,7 +99,7 @@ export default function CommentSection({ postId }) {
         navigate('/sign-in');
         return;
       }
-      const res = await fetch(`/api/comment/deleteComment/${commentId}`, {
+      const res = await fetch(`/api/comment/delete-comment/${commentId}`, {
         method: 'DELETE',
       });
       if (res.ok) {
@@ -110,6 +110,8 @@ export default function CommentSection({ postId }) {
       console.log(error.message);
     }
   };
+
+
   return (
     <div className='max-w-2xl mx-auto w-full p-3'>
       {currentUser ? (
