@@ -4,12 +4,14 @@ import "../../public/stylesheets/spinner.css";
 import { Button } from "flowbite-react";
 import CallToAction from "../components/CallToAction";
 import CommentSection from "../components/CommentSection";
+import PostCard from "../components/PostCard";
 
 export default function PostPage() {
   const { postSlug } = useParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [post, setPost] = useState(null);
+  const [recentPosts, setRecentPosts] = useState(null);
   useEffect(() => {
     const fetchPost = async () => {
       try {
@@ -34,6 +36,24 @@ export default function PostPage() {
 
     fetchPost();
   }, [postSlug]);
+
+  useEffect(() => {
+    const fetchRecentPosts = async () => {
+      try {
+        const res = await fetch("/api/post/get-post?limit=3");
+        if (!res.ok) {
+          throw new Error("Failed to fetch recent posts");
+        }
+        const data = await res.json();
+        setRecentPosts(data.posts);
+      } catch (error) {
+        console.error("Error fetching recent posts:", error);
+      }
+    };
+
+    fetchRecentPosts();
+  }, []);
+
   return loading ? (
     <div className="flex justify-center items-center min-h-screen">
       <div className="spinner"></div>
@@ -71,9 +91,16 @@ export default function PostPage() {
         dangerouslySetInnerHTML={{ __html: post && post.content }}
       ></div>
       <div className="max-w-4xl mx-auto w-full">
-        <CallToAction/>
+        <CallToAction />
       </div>
-      <CommentSection postId={post._id}/>
+      <CommentSection postId={post._id} />
+      <div className="flex flex-col justify-center items-center mb-1">
+        <h1 className="text-2xl mt-5 font-serif">Recent Articles</h1>
+        <div className="flex flex-wrap w-full sm:w-screen gap-5 mt-5 justify-center">
+          {recentPosts &&
+            recentPosts.map((post) => <PostCard key={post._id} post={post} />)}
+        </div>
+      </div>
     </main>
   );
 }
