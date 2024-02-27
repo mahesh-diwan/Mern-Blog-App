@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Navbar, TextInput, Button, Dropdown, Avatar } from "flowbite-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AiOutlineSearch } from "react-icons/ai";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
@@ -17,6 +17,16 @@ export default function Header() {
   const [signoutModal, setSignoutModal] = useState(false);
   const { currentUser } = useSelector((state) => state.user);
   const { theme } = useSelector((state) => state.theme);
+  const [searchTerm, setSearchTerm] = useState('');
+  const location = useLocation();
+  const navigate = useNavigate();
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const searchTermFromUrl = urlParams.get('searchTerm');
+    if (searchTermFromUrl) {
+      setSearchTerm(searchTermFromUrl);
+    }
+  }, [location.search]);
   const handleSignout = async () => {
     setSignoutModal(false);
     try {
@@ -33,6 +43,14 @@ export default function Header() {
       console.log(error);
     }
   };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set('searchTerm', searchTerm);
+    const searchQuery = urlParams.toString();
+    navigate(`/search?${searchQuery}`);
+  }
   return (
     <div>
       <Navbar className="border-b-2">
@@ -45,8 +63,10 @@ export default function Header() {
           </span>
           Blog
         </Link>
-        <form>
+        <form onSubmit={handleSubmit}>
           <TextInput
+            onChange={(e) => setSearchTerm(e.target.value)}
+            value={searchTerm}
             type="text"
             placeholder="Search..."
             rightIcon={AiOutlineSearch}
