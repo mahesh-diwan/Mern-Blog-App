@@ -177,7 +177,7 @@ export default function DashPosts() {
       </Modal>
       {loading && (
         <div className="flex justify-center items-center min-h-screen">
-          <div class="spinner"></div>
+          <div className="spinner"></div>
         </div>
       )}
     </div>

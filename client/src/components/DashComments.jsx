@@ -90,7 +90,7 @@ export default function DashComments() {
       )}
       {loading && (
         <div className="flex justify-center items-center min-h-screen w-full">
-          <div class="spinner"></div>
+          <div className="spinner"></div>
         </div>
       )}
       {currentUser.isAdmin && comments.length > 0 && (
