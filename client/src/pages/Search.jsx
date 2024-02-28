@@ -156,7 +156,7 @@ export default function Search() {
       </div>
 
       <div className="w-full">
-        <h1 className="text-3xl font-semibold sm:border-b border-gray-500 p-3 mt-5">
+        <h1 className="text-3xl font-semibold sm:border-b border-gray-700 p-3 mt-5 text-center">
           Post Result
         </h1>
         <div className="p-7 flex flex-wrap justify-center gap-4">

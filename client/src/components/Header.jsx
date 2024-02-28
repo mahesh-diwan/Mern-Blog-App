@@ -7,9 +7,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { CiMail, CiUser } from "react-icons/ci";
 import { toggleTheme } from "../redux/theme/themeSlice.mjs";
 import { signoutSuccess } from "../redux/user/userSlice.mjs";
-import { Modal } from 'flowbite-react'
+import { Modal } from "flowbite-react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
-
+import { GoGraph } from "react-icons/go";
+import { PiSignOut } from "react-icons/pi";
 
 export default function Header() {
   const path = useLocation().pathname;
@@ -17,12 +18,12 @@ export default function Header() {
   const [signoutModal, setSignoutModal] = useState(false);
   const { currentUser } = useSelector((state) => state.user);
   const { theme } = useSelector((state) => state.theme);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
-    const searchTermFromUrl = urlParams.get('searchTerm');
+    const searchTermFromUrl = urlParams.get("searchTerm");
     if (searchTermFromUrl) {
       setSearchTerm(searchTermFromUrl);
     }
@@ -47,10 +48,10 @@ export default function Header() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const urlParams = new URLSearchParams(location.search);
-    urlParams.set('searchTerm', searchTerm);
+    urlParams.set("searchTerm", searchTerm);
     const searchQuery = urlParams.toString();
     navigate(`/search?${searchQuery}`);
-  }
+  };
   return (
     <div>
       <Navbar className="border-b-2">
@@ -105,11 +106,24 @@ export default function Header() {
                   {currentUser.email}
                 </span>
               </Dropdown.Header>
-              <Link to="/dashboard?tab=profile">
-                <Dropdown.Item>Profile</Dropdown.Item>
+              <Link to="/dashboard?tab=dash">
+                <Dropdown.Item className="flex gap-2">
+                  <GoGraph className="w-5 h-5" />
+                  Dashboard
+                </Dropdown.Item>
               </Link>
               <Dropdown.Divider />
-              <Dropdown.Item onClick={()=>setSignoutModal(true)}>Sign Out</Dropdown.Item>
+              <Link to="/dashboard?tab=profile">
+                <Dropdown.Item className="flex gap-2">
+                  <CiUser className="w-5 h-5" />
+                  Profile
+                </Dropdown.Item>
+              </Link>
+              <Dropdown.Divider />
+              <Dropdown.Item className="flex gap-2" onClick={() => setSignoutModal(true)}>
+                <PiSignOut className="w-5 h-5"/>
+                Sign Out
+              </Dropdown.Item>
             </Dropdown>
           ) : (
             <Link to="/signin">
