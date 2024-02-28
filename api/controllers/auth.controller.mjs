@@ -78,6 +78,8 @@ export const google = async (req, res, next) => {
     const user = await User.findOne({ email });
     if (user) {
       const token = jwt.sign({ id: user._id, isAdmin: user.isAdmin }, process.env.JWT_SECRET);
+      // Log the token to ensure it's being generated correctly
+      console.log("Generated token of exsisting user :", token);
       const { password, ...rest } = user._doc;
       res
         .status(200)
@@ -112,3 +114,4 @@ export const google = async (req, res, next) => {
     next(error);
   }
 };
+

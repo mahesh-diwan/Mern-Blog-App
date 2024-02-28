@@ -106,13 +106,18 @@ export default function Header() {
                   {currentUser.email}
                 </span>
               </Dropdown.Header>
-              <Link to="/dashboard?tab=dash">
-                <Dropdown.Item className="flex gap-2">
-                  <GoGraph className="w-5 h-5" />
-                  Dashboard
-                </Dropdown.Item>
-              </Link>
-              <Dropdown.Divider />
+              {currentUser.isAdmin && (
+                <>
+                  <Link to="/dashboard?tab=dash">
+                    <Dropdown.Item className="flex gap-2">
+                      <GoGraph className="w-5 h-5" />
+                      Dashboard
+                    </Dropdown.Item>
+                  </Link>
+                  <Dropdown.Divider />
+                </>
+              )}
+
               <Link to="/dashboard?tab=profile">
                 <Dropdown.Item className="flex gap-2">
                   <CiUser className="w-5 h-5" />
@@ -120,8 +125,11 @@ export default function Header() {
                 </Dropdown.Item>
               </Link>
               <Dropdown.Divider />
-              <Dropdown.Item className="flex gap-2" onClick={() => setSignoutModal(true)}>
-                <PiSignOut className="w-5 h-5"/>
+              <Dropdown.Item
+                className="flex gap-2"
+                onClick={() => setSignoutModal(true)}
+              >
+                <PiSignOut className="w-5 h-5" />
                 Sign Out
               </Dropdown.Item>
             </Dropdown>
