@@ -84,8 +84,8 @@ export default function DashComments() {
   return (
     <>
       {comments.length === 0 && !loading && (
-        <div className="flex justify-center items-center">
-          <p>No comments yet!</p>
+        <div className="flex my-auto w-full h-full justify-center">
+          <p className="font-semibold">No comments yet!</p>
         </div>
       )}
       {loading && (

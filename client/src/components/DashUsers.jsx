@@ -162,6 +162,14 @@ export default function DashUsers() {
           <div className="spinner"></div>
         </div>
       )}
+
+      {
+        !loading && users.length === 0 && (
+          <div className="flex justify-center items-center w-full h-full">
+            <p className="font-semibold">No Users</p>
+          </div>
+        )
+      }
     </div>
   );
 }

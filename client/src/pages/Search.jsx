@@ -156,9 +156,6 @@ export default function Search() {
       </div>
 
       <div className="w-full">
-        <h1 className="text-3xl font-semibold sm:border-b border-gray-700 p-3 mt-5 text-center">
-          Post Result
-        </h1>
         <div className="p-7 flex flex-wrap justify-center gap-4">
           {!loading && posts.length === 0 && (
             <div className="flex justify-center items-center min-h-screen w-full">
@@ -170,9 +167,16 @@ export default function Search() {
               <div className="spinner"></div>
             </div>
           )}
-          {!loading &&
-            posts &&
-            posts.map((post) => <PostCard key={post._id} post={post} />)}
+          {!loading && posts && (
+            <>
+              <h1 className="text-3xl font-semibold sm:border-b border-gray-700 p-3 mt-5 text-center">
+                Post Result
+              </h1>
+              {posts.map((post) => (
+                <PostCard key={post._id} post={post} />
+              ))}
+            </>
+          )}
         </div>
         {!loading && showMore && (
           <div className="flex w-full justify-center items-center">
@@ -185,13 +189,11 @@ export default function Search() {
           </div>
         )}
 
-        {
-            !loading && showMoreLoading && (
-                <div className="flex my-4 justify-center w-full">
-                    <Spinner/>
-                </div>
-            )
-        }
+        {!loading && showMoreLoading && (
+          <div className="flex my-4 justify-center w-full">
+            <Spinner />
+          </div>
+        )}
       </div>
     </div>
   );
