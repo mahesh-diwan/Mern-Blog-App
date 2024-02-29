@@ -14,8 +14,11 @@ import "react-circular-progressbar/dist/styles.css";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import "../../public/stylesheets/spinner.css";
+import useDocumentTitle from '../components/useDocumentTitle'
+
 
 export default function UpdatePost() {
+  useDocumentTitle('Updata Post');
   const [file, setFile] = useState(null);
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
   const [imageUploadError, setImageUploadError] = useState(null);

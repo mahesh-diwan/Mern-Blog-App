@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import CallToAction from "../components/CallToAction";
 import PostCard from "../components/PostCard";
+import useDocumentTitle from "../components/useDocumentTitle";
 
 export default function Home() {
+  useDocumentTitle('Home');
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 

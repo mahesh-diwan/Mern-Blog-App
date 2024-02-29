@@ -1,7 +1,11 @@
 import React from 'react'
 import CallToAction from '../components/CallToAction'
+import useDocumentTitle from '../components/useDocumentTitle'
+
 
 export default function Projects() {
+  useDocumentTitle('Projects');
+
   return (
     <div className='min-h-screen max-w-2xl mx-auto flex flex-col gap-6 p-3 justify-center items-center my-4'>
       <h1 className='text-3xl font-semibold'>Projects</h1>

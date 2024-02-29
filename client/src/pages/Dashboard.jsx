@@ -6,10 +6,14 @@ import DashPosts from '../components/DashPosts'
 import DashUsers from '../components/DashUsers'
 import DashComments from '../components/DashComments'
 import DashboardComp from '../components/DashboardComp'
+import useDocumentTitle from '../components/useDocumentTitle'
+
 
 export default function Dashboard() {
   const location = useLocation()
   const [tab, setTab] = useState('')
+  useDocumentTitle(`Dashboard | ${tab.toUpperCase()}`);
+
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search)
     const tabFromUrl = urlParams.get('tab')

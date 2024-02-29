@@ -13,8 +13,11 @@ import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 
 import "react-quill/dist/quill.snow.css";
+import useDocumentTitle from '../components/useDocumentTitle'
 
 export default function CreatePost() {
+  useDocumentTitle("Create Post");
+  useDocu
   const [file, setFile] = useState(null);
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
   const [imageUploadError, setImageUploadError] = useState(null);

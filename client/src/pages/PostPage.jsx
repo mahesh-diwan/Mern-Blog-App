@@ -5,6 +5,8 @@ import { Button } from "flowbite-react";
 import CallToAction from "../components/CallToAction";
 import CommentSection from "../components/CommentSection";
 import PostCard from "../components/PostCard";
+import useDocumentTitle from '../components/useDocumentTitle'
+
 
 export default function PostPage() {
   const { postSlug } = useParams();
@@ -12,6 +14,8 @@ export default function PostPage() {
   const [error, setError] = useState(false);
   const [post, setPost] = useState(null);
   const [recentPosts, setRecentPosts] = useState(null);
+  useDocumentTitle(`${postSlug.toUpperCase()}`);
+
   useEffect(() => {
     const fetchPost = async () => {
       try {

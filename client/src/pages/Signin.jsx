@@ -4,8 +4,12 @@ import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { useDispatch, useSelector } from "react-redux";
 import { signInStart, signInSuccess, signInFailure } from "../redux/user/userSlice";
 import OAuth from "../components/OAuth";
+import useDocumentTitle from '../components/useDocumentTitle'
+
 
 export default function Signin() {
+  useDocumentTitle('Sign In');
+
   const [formData, setFormData] = useState({});
   const { loading, error: errorMessage } = useSelector(state => state.user);
   const dispatch = useDispatch();

@@ -1,6 +1,8 @@
 import React from 'react'
+import useDocumentTitle from '../components/useDocumentTitle'
 
 export default function About() {
+  useDocumentTitle('About Us')
   return (
     <div className='min-h-screen flex items-center justify-center'>
       <div className="max-w-2xl mx-auto p-3  text-center">

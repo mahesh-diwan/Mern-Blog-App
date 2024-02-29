@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import PostCard from "../components/PostCard";
 import "../../public/stylesheets/spinner.css";
+import useDocumentTitle from "../components/useDocumentTitle";
 
 export default function Search() {
   const [sidebarData, setSidebarData] = useState({
@@ -10,6 +11,7 @@ export default function Search() {
     sort: "desc",
     category: "uncategorized",
   });
+  useDocumentTitle(`Search | ${sidebarData.searchTerm.toUpperCase()}`);
   const location = useLocation();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -156,6 +158,9 @@ export default function Search() {
       </div>
 
       <div className="w-full">
+        <h1 className="text-3xl font-semibold sm:border-b border-gray-700 p-3 mt-5 text-center">
+          Post Result
+        </h1>
         <div className="p-7 flex flex-wrap justify-center gap-4">
           {!loading && posts.length === 0 && (
             <div className="flex justify-center items-center min-h-screen w-full">
@@ -167,16 +172,9 @@ export default function Search() {
               <div className="spinner"></div>
             </div>
           )}
-          {!loading && posts && (
-            <>
-              <h1 className="text-3xl font-semibold sm:border-b border-gray-700 p-3 mt-5 text-center">
-                Post Result
-              </h1>
-              {posts.map((post) => (
-                <PostCard key={post._id} post={post} />
-              ))}
-            </>
-          )}
+          {!loading &&
+            posts &&
+            posts.map((post) => <PostCard key={post._id} post={post} />)}
         </div>
         {!loading && showMore && (
           <div className="flex w-full justify-center items-center">
