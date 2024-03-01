@@ -27,15 +27,22 @@ Welcome to my Blog Web App repository! This project is a fun and interactive blo
 To get started with this project, follow these steps:
 
 1. Clone this repository to your local machine. You can use the following command:
+
    ```bash
    git clone https://github.com/thamir0022/Mern-Blog-App.git
 
-2. Change Directory and Install Dependencies
-   ```bash
+2. Change Directory
+
+    ```bash
    cd Mern-Blog-App
+
+3. Install Dependencies
+
+   ```bash
    npm install
 
-3. Start the devolopement server
+4. Start the devolopement server
+
     ```bash
     npm start
 
