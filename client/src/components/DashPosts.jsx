@@ -155,7 +155,7 @@ export default function DashPosts() {
         !loading && userPosts.length === 0 && (
           <div className="flex flex-col gap-3 h-full min-w-full justify-center items-center">
             <p className="font-medium">You have no posts yet!, Create your first post.</p>
-            <Link to={'/create-post'}>
+            <Link to={'/post/create-post'}>
               <Button type="button" gradientDuoTone={'purpleToBlue'} outline>Create Post</Button>
             </Link>
           </div>
