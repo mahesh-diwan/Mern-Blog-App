@@ -15,7 +15,7 @@ env:
   CONTAINER_NAME_FRONTEND: mern-frontend
 
 jobs:
-  # --- JOB 1: QUALITY GATE ---
+  # --- JOB 1: QUALITY Check ---
   test-and-scan:
     runs-on: ubuntu-latest
     steps:
