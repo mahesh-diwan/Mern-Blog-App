@@ -11,7 +11,7 @@ This phase focuses on improving the quality of the codebase and automating check
 *   **1.2. Pre-commit Hooks:**
     *   **Tool:** Husky.
 *   **1.3. Testing:**
-    *   **Tools:** Jest & React Testing Library (frontend), Mocha & Chai or Jest (backend).
+    *   **Tools:** Jest & React Testing Library (frontend), Mocha & Chai (backend).
 
 #### Phase 2: Continuous Integration (CI) & Code Analysis
 
