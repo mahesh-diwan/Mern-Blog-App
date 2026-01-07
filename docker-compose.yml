@@ -1,62 +1,53 @@
-name: Mern Blog App Pipeline
+version: "3.8"
 
-on:
-  push:
-    branches: [main]
+services:
+  # 1. Database: MongoDB
+  mongodb:
+    image: mongo:latest
+    container_name: mern-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - mern-network
 
-env:
-  AWS_REGION: us-east-1
-  ECR_REPOSITORY_BACKEND: mern-backend
-  ECR_REPOSITORY_FRONTEND: mern-frontend
-  ECS_SERVICE: mern-blog-service
-  ECS_CLUSTER: mern-blog-cluster
-  # CRITICAL: These MUST match your main.tf container_definitions names
-  CONTAINER_NAME_BACKEND: mern-backend
-  CONTAINER_NAME_FRONTEND: mern-frontend
+  # 2. Backend: Node.js API
+  backend:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    container_name: mern-backend
+    restart: always
+    environment:
+      # These match your API's expected variables
+      MONGO: "mongodb://mongodb:27017/mern-blog"
+      JWT_SECRET: ${JWT_SECRET:-supersecretkey123}
+      NODE_ENV: production
+    depends_on:
+      - mongodb
+    networks:
+      - mern-network
 
-jobs:
-  test-and-scan:
-    # ... (Keep your existing test-and-scan job here) ...
+  # 3. Frontend: React + Nginx
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: mern-frontend
+    ports:
+      - "80:80" # Standard production port
+    depends_on:
+      - backend
+    networks:
+      - mern-network
 
-  build-and-push:
-    needs: test-and-scan
-    runs-on: ubuntu-latest
-    outputs:
-      registry: ${{ steps.login-ecr.outputs.registry }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
+# Persistence for your database
+volumes:
+  mongodb_data:
 
-      - name: Build and Push Backend
-        run: |
-          docker build -t ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_BACKEND }}:${{ github.sha }} ./api
-          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_BACKEND }}:${{ github.sha }}
-
-      - name: Build and Push Frontend
-        run: |
-          docker build -t ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_FRONTEND }}:${{ github.sha }} ./client
-          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_FRONTEND }}:${{ github.sha }}
-
-  deploy:
-    needs: build-and-push
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Download current task definition
-        run: |
-          aws ecs describe-task-definition --task-definition mern-blog
+# Isolated network for security
+networks:
+  mern-network:
+    driver: bridge
