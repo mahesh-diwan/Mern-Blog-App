@@ -43,7 +43,7 @@ jobs:
         with:
           args: -Dsonar.qualitygate.wait=false
 
-  # --- JOB 2: BUILD & PUSH TO ECR ---
+  # --- JOB 2: BUILD & PUSH TO ECR  ---
   build-and-push:
     needs: test-and-scan
     runs-on: ubuntu-latest
