@@ -25,3 +25,13 @@ dist-ssr
 .env.terraform/
 *.tfstate
 *.tfstate.backup
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+.override.tf
+.override.tf.json
+terraform.rc
+.terraformrc
