@@ -15,9 +15,9 @@ export const createBlog = async (req, res, next) => {
     .toLowerCase()
     .split(/\s+/)
     .join("-")
-    .replace(/[^a-zA-Z0-9-]/g, "")
-    .replace(/-+/g, "-") // Replace consecutive hyphens with single hyphen
-    .replace(/^-+|-+$/g, ""); // Remove hyphens from beginning and end
+    .replaceAll(/[^a-zA-Z0-9-]/g, "")
+    .replaceAll(/-+/g, "-") // replaceAll consecutive hyphens with single hyphen
+    .replaceAll(/^-+|-+$/g, ""); // Remove hyphens from beginning and end
 
   const newPost = new Post({
     ...req.body,
@@ -34,8 +34,8 @@ export const createBlog = async (req, res, next) => {
 
 export const getPosts = async (req, res, next) => {
   try {
-    const startIndex = parseInt(req.query.startIndex) || 0;
-    const limit = parseInt(req.query.limit) || 9;
+    const startIndex = Number.parseInt(req.query.startIndex) || 0;
+    const limit = Number.parseInt(req.query.limit) || 9;
     const sortDirection = req.query.order === 'asc' ? 1 : -1;
     const posts = await Post.find({
       ...(req.query.userId && { userId: req.query.userId }),
