@@ -1,4 +1,4 @@
-import React from "react";
+
 import { Link, useNavigate } from "react-router-dom";
 import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { useState } from "react";
@@ -106,6 +106,7 @@ export default function Signup() {
 
           </form>
           <div className="flex gap-2 text-sm mt-5">
+{/* eslint-disable-next-line react/no-unescaped-entities */}
             <span>Have an account?</span>
             <Link to="/signin" className="text-blue-500">
               Sign In

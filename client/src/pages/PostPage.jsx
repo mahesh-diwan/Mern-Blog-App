@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import "../../public/stylesheets/spinner.css";
 import { Button } from "flowbite-react";
@@ -11,7 +11,6 @@ import useDocumentTitle from '../components/useDocumentTitle'
 export default function PostPage() {
   const { postSlug } = useParams();
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
   const [post, setPost] = useState(null);
   const [recentPosts, setRecentPosts] = useState(null);
   useDocumentTitle(`${postSlug.toUpperCase()}`);
@@ -25,15 +24,12 @@ export default function PostPage() {
         });
         const data = await res.json();
         if (!res.ok) {
-          setError(true);
           setLoading(false);
         } else if (res.ok) {
           setPost(data.posts[0]);
           setLoading(false);
-          setError(null);
         }
       } catch (error) {
-        setError(true);
         setLoading(false);
       }
     };

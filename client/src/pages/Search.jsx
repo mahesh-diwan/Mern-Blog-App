@@ -1,5 +1,5 @@
 import { Button, Select, Spinner, TextInput } from "flowbite-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import PostCard from "../components/PostCard";
 import "../../public/stylesheets/spinner.css";
@@ -50,10 +50,12 @@ export default function Search() {
             setShowMore(true);
           }
         }
-      } catch (error) {}
+      } catch (error) {
+        console.error(error);
+      }
     };
     fetchPosts();
-  }, [location.search]);
+  }, [location.search, sidebarData]);
 
   const handleChange = (e) => {
     if (e.target.id === "searchTerm") {

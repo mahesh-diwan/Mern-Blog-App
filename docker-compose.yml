@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  # 1. Database: MongoDB
+  mongodb:
+    image: mongo:latest
+    container_name: mern-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - mern-network
+
+  # 2. Backend: Node.js API
+  backend:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    container_name: mern-backend
+    restart: always
+    environment:
+      # These match your API's expected variables
+      MONGO: "mongodb://mongodb:27017/mern-blog"
+      JWT_SECRET: ${JWT_SECRET:-supersecretkey123}
+      NODE_ENV: production
+    depends_on:
+      - mongodb
+    networks:
+      - mern-network
+
+  # 3. Frontend: React + Nginx
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: mern-frontend
+    ports:
+      - "80:80" # Standard production port
+    depends_on:
+      - backend
+    networks:
+      - mern-network
+
+# Persistence for your database
+volumes:
+  mongodb_data:
+
+# Isolated network for security
+networks:
+  mern-network:
+    driver: bridge

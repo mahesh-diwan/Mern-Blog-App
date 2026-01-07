@@ -1,5 +1,5 @@
 import { Alert, Button, Modal, TextInput } from "flowbite-react";
-import React, { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 import {
@@ -48,9 +48,9 @@ export default function DashProfile() {
     if (imageFile) {
       uploadImage();
     }
-  }, [imageFile]);
+  }, [imageFile, uploadImage]);
 
-  const uploadImage = async () => {
+  const uploadImage = useCallback(async () => {
     setImageFileUploading(true);
     setImageFileUploadError(null);
     const storage = getStorage(app);
@@ -64,7 +64,7 @@ export default function DashProfile() {
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         setImageFileUploadingProgress(progress.toFixed(0));
       },
-      (error) => {
+      () => {
         setImageFileUploadError(
           "Could not upload image, File must be less than 2MB"
         );
@@ -81,7 +81,7 @@ export default function DashProfile() {
         });
       }
     );
-  };
+  }, [formData, imageFile]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -116,7 +116,7 @@ export default function DashProfile() {
         setUpdateUserError(data.message);
       } else {
         dispatch(updateSuccess(data));
-        setUpdateUserSuccess("User's profile updated successfully");
+        setUpdateUserSuccess("User&apos;s profile updated successfully");
       }
     } catch (error) {
       dispatch(updateFailure(error.message));
@@ -132,7 +132,6 @@ export default function DashProfile() {
         method: "DELETE",
       });
 
-      const data = await res.json();
       if (!res.ok) {
         dispatch(deleteUserFailure());
       } else {
@@ -149,9 +148,8 @@ export default function DashProfile() {
       const res = await fetch("/api/user/signout", {
         method: "POST",
       });
-      const data = await res.json();
       if (!res.ok) {
-        console.log(data.message);
+        console.log("Signout failed");
       } else {
         dispatch(signoutSuccess());
       }
@@ -286,7 +284,7 @@ export default function DashProfile() {
             </h3>
             <div className="flex justify-center gap-4">
               <Button color="failure" onClick={handleDeleteUser}>
-                Yes, I'm sure
+                Yes, I&apos;m sure
               </Button>
               <Button color="gray" onClick={() => setShowModal(false)}>
                 No, Cancel
@@ -311,7 +309,7 @@ export default function DashProfile() {
             </h3>
             <div className="flex justify-center gap-4">
               <Button color="failure" onClick={handleSignout}>
-                Yes, I'm sure
+                Yes, I&apos;m sure
               </Button>
               <Button color="gray" onClick={() => setSignoutModal(false)}>
                 No, Cancel

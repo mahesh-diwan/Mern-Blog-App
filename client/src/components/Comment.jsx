@@ -1,8 +1,16 @@
-import React, { useEffect, useState } from "react";
+import PropTypes from 'prop-types';
+import { useEffect, useState } from "react";
 import { FaThumbsUp } from "react-icons/fa";
 import moment from "moment";
 import { Button, Spinner, Textarea } from "flowbite-react";
 import { useSelector } from "react-redux";
+
+Comment.propTypes = {
+  comment: PropTypes.object.isRequired,
+  onLike: PropTypes.func.isRequired,
+  onEdit: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
+};
 
 export default function Comment({ comment, onLike, onEdit, onDelete }) {
   const { currentUser } = useSelector((state) => state.user);

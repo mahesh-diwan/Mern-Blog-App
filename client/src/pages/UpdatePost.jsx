@@ -81,7 +81,7 @@ export default function UpdatePost() {
           });
         }
       );
-    } catch (error) {
+    } catch (error) { // eslint-disable-next-line no-unused-vars
       setImageUploadError("Image upload failed");
       setImageUploadProgress(null);
       console.log(error);
@@ -110,7 +110,7 @@ export default function UpdatePost() {
         setPublishError(null);
         navigate(`/post/${data.slug}`);
       }
-    } catch (error) {
+    } catch {
       setPublishError("Something went wrong");
     }
   };
@@ -118,7 +118,7 @@ export default function UpdatePost() {
     <>
       {loading ? (
         <div className="flex justify-center items-center min-h-screen">
-          <div class="spinner"></div>
+          <div className="spinner"></div>
         </div>
       ) : (
         <div className="p-3 max-w-3xl mx-auto min-h-screen">
@@ -188,7 +188,7 @@ export default function UpdatePost() {
             )}
             <ReactQuill
               theme="snow"
-              value={formData.content}
+              value={formData?.content || ""}
               placeholder="Write something..."
               className="h-72 mb-12"
               required

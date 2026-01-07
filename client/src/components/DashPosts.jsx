@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Button, Modal, Table } from "flowbite-react";
 import { Link } from "react-router-dom";
@@ -33,7 +33,7 @@ export default function DashPosts() {
     if (currentUser.isAdmin) {
       fetchPosts();
     }
-  }, [currentUser._id]);
+  }, [currentUser._id, currentUser.isAdmin]);
 
   const handleShowMore = async () => {
     setLoading(true);
@@ -154,6 +154,7 @@ export default function DashPosts() {
       {
         !loading && userPosts.length === 0 && (
           <div className="flex flex-col gap-3 h-full min-w-full justify-center items-center">
+{/* eslint-disable-next-line react/no-unescaped-entities */}
             <p className="font-medium">You have no posts yet!, Create your first post.</p>
             <Link to={'/post/create-post'}>
               <Button type="button" gradientDuoTone={'purpleToBlue'} outline>Create Post</Button>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Alert, Button, FileInput, Select, TextInput } from "flowbite-react";
 import ReactQuill from "react-quill";
 import { app } from "../firebase.mjs";
@@ -17,7 +17,6 @@ import useDocumentTitle from '../components/useDocumentTitle'
 
 export default function CreatePost() {
   useDocumentTitle("Create Post");
-  useDocu
   const [file, setFile] = useState(null);
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
   const [imageUploadError, setImageUploadError] = useState(null);
@@ -42,7 +41,7 @@ export default function CreatePost() {
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           setImageUploadProgress(progress.toFixed(0));
         },
-        (error) => {
+        () => {
           setImageUploadError("Image upload failed");
           setImageUploadProgress(null);
         },

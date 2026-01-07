@@ -1,4 +1,4 @@
-import React from 'react'
+
 import CallToAction from '../components/CallToAction'
 import useDocumentTitle from '../components/useDocumentTitle'
 

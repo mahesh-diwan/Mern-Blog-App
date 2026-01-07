@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Sidebar, Modal, Button } from "flowbite-react";
 import {
   HiUser,
@@ -132,7 +132,7 @@ export default function DashSidebar() {
             </h3>
             <div className="flex justify-center gap-4">
               <Button color="failure" onClick={handleSignout}>
-                Yes, I'm sure
+                Yes, I&apos;m sure
               </Button>
               <Button color="gray" onClick={() => setSignoutModal(false)}>
                 No, Cancel
