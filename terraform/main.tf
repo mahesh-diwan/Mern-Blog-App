@@ -1,5 +1,3 @@
-
-
 terraform {
   required_providers {
     aws = {
@@ -16,9 +14,8 @@ provider "aws" {
 variable "mongo_uri" {
   description = "MongoDB Atlas Connection String"
   type        = string
-  sensitive   = true # This hides the value from Terraform logs
+  sensitive   = true 
 }
-
 
 # --- CLUSTER & REPOS ---
 resource "aws_ecs_cluster" "mern_cluster" {
@@ -27,7 +24,7 @@ resource "aws_ecs_cluster" "mern_cluster" {
 
 resource "aws_ecr_repository" "backend" {
   name         = "mern-backend"
-  force_delete = true # Useful for testing
+  force_delete = true 
 }
 
 resource "aws_ecr_repository" "frontend" {
@@ -35,7 +32,7 @@ resource "aws_ecr_repository" "frontend" {
   force_delete = true
 }
 
-# --- NETWORKING (Fixes internet & route access) ---
+# --- NETWORKING ---
 resource "aws_vpc" "mern_vpc" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_hostnames = true
@@ -66,12 +63,11 @@ resource "aws_route_table_association" "public_assoc" {
   route_table_id = aws_route_table.public_rt.id
 }
 
-# --- SECURITY GROUPS (Added Port 80) ---
+# --- SECURITY GROUPS ---
 resource "aws_security_group" "mern_sg" {
   name   = "mern-app-sg"
   vpc_id = aws_vpc.mern_vpc.id
 
-  # Frontend Port
   ingress {
     from_port   = 80
     to_port     = 80
@@ -79,7 +75,6 @@ resource "aws_security_group" "mern_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Backend Port
   ingress {
     from_port   = 3000
     to_port     = 3000
@@ -101,15 +96,14 @@ resource "aws_cloudwatch_log_group" "ecs_logs" {
   retention_in_days = 7
 }
 
-# --- SECRETS (SSM Parameter for Mongo URI) ---
-
+# --- SECRETS ---
 resource "aws_ssm_parameter" "mongo_uri" {
   name  = "/mern-blog/mongo-uri"
   type  = "SecureString"
   value = var.mongo_uri
 }
 
-# --- IAM ROLE (Updated with SSM Permissions)  ---
+# --- IAM ROLE ---
 resource "aws_iam_role" "ecs_task_execution_role" {
   name = "mern-blog-execution-role"
 
@@ -128,18 +122,25 @@ resource "aws_iam_role_policy_attachment" "ecs_execution_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-# Add custom policy to allow pulling SSM secrets
+# Standard policy for SSM and KMS (to decrypt SecureStrings)
 resource "aws_iam_role_policy" "ssm_policy" {
   name = "ecs-ssm-policy"
   role = aws_iam_role.ecs_task_execution_role.id
 
   policy = jsonencode({
     Version = "2012-10-17"
-    Statement = [{
-      Action   = ["ssm:GetParameters"]
-      Effect   = "Allow"
-      Resource = [aws_ssm_parameter.mongo_uri.arn]
-    }]
+    Statement = [
+      {
+        Action   = ["ssm:GetParameters", "ssm:GetParameter"]
+        Effect   = "Allow"
+        Resource = [aws_ssm_parameter.mongo_uri.arn]
+      },
+      {
+        Action   = ["kms:Decrypt"]
+        Effect   = "Allow"
+        Resource = ["*"] # Required for SSM SecureString decryption
+      }
+    ]
   })
 }
 
@@ -151,12 +152,14 @@ resource "aws_ecs_task_definition" "mern_task" {
   cpu                      = "512"
   memory                   = "1024"
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  # Using the same role for task and execution for simplicity
+  task_role_arn            = aws_iam_role.ecs_task_execution_role.arn 
 
   container_definitions = jsonencode([
     {
-      name      = "mern-backend"
-      image     = "${aws_ecr_repository.backend.repository_url}:latest"
-      essential = true
+      name         = "mern-backend"
+      image        = "${aws_ecr_repository.backend.repository_url}:latest"
+      essential    = true
       portMappings = [{ containerPort = 3000, hostPort = 3000 }]
       secrets = [
         { name = "MONGO_URI", valueFrom = aws_ssm_parameter.mongo_uri.arn }
@@ -164,27 +167,33 @@ resource "aws_ecs_task_definition" "mern_task" {
       logConfiguration = {
         logDriver = "awslogs"
         options = {
-          "awslogs-group"         = "/ecs/mern-blog"
+          "awslogs-group"         = aws_cloudwatch_log_group.ecs_logs.name
           "awslogs-region"        = "us-east-1"
           "awslogs-stream-prefix" = "backend"
         }
       }
     },
     {
-      name      = "mern-frontend"
-      image     = "${aws_ecr_repository.frontend.repository_url}:latest"
-      essential = true
+      name         = "mern-frontend"
+      image        = "${aws_ecr_repository.frontend.repository_url}:latest"
+      essential    = true
       portMappings = [{ containerPort = 80, hostPort = 80 }]
       logConfiguration = {
         logDriver = "awslogs"
         options = {
-          "awslogs-group"         = "/ecs/mern-blog"
+          "awslogs-group"         = aws_cloudwatch_log_group.ecs_logs.name
           "awslogs-region"        = "us-east-1"
           "awslogs-stream-prefix" = "frontend"
         }
       }
     }
   ])
+
+  # Ensures IAM and Logs are ready before Task creation
+  depends_on = [
+    aws_iam_role_policy.ssm_policy,
+    aws_cloudwatch_log_group.ecs_logs
+  ]
 }
 
 # --- SERVICE ---
@@ -200,4 +209,7 @@ resource "aws_ecs_service" "mern_service" {
     security_groups  = [aws_security_group.mern_sg.id]
     assign_public_ip = true
   }
+
+  # This prevents the service from trying to start before the role is active
+  depends_on = [aws_iam_role_policy_attachment.ecs_execution_policy]
 }
