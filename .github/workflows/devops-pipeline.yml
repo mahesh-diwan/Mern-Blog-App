@@ -1,30 +1,115 @@
-test-and-scan:
-  runs-on: ubuntu-latest
-  steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        # Disabling shallow clone is required for relevant SonarCloud analysis
-        fetch-depth: 0
+name: Mern Blog App Pipeline
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: "18"
+on:
+  push:
+    branches: [main]
 
-    - name: Install Frontend Deps & Lint
-      run: |
-        cd client
-        npm install
-        npx eslint src/ --max-warnings 0
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY_BACKEND: mern-backend
+  ECR_REPOSITORY_FRONTEND: mern-frontend
+  ECS_SERVICE: mern-blog-service
+  ECS_CLUSTER: mern-blog-cluster
+  # The name of the containers in your ECS Task Definition
+  CONTAINER_NAME_BACKEND: mern-backend
+  CONTAINER_NAME_FRONTEND: mern-frontend
 
-    - name: SonarCloud Scan
-      uses: SonarSource/sonarcloud-github-action@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      with:
-        # This ensures the pipeline waits for the scan result
-        # and fails the build if the Quality Gate fails.
-        args: >
-          -Dsonar.qualitygate.wait=true
+jobs:
+  # --- JOB 1: QUALITY GATE ---
+  test-and-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Install Frontend Deps & Lint
+        run: |
+          cd client
+          npm install
+          npx eslint src/ --max-warnings 0
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: -Dsonar.qualitygate.wait=true
+
+  # --- JOB 2: BUILD & PUSH TO ECR ---
+  build-and-push:
+    needs: test-and-scan
+    runs-on: ubuntu-latest
+    outputs:
+      registry: ${{ steps.login-ecr.outputs.registry }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and Push Backend
+        run: |
+          docker build -t ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_BACKEND }}:${{ github.sha }} ./api
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_BACKEND }}:${{ github.sha }}
+
+      - name: Build and Push Frontend
+        run: |
+          docker build -t ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_FRONTEND }}:${{ github.sha }} ./client
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_FRONTEND }}:${{ github.sha }}
+
+  # --- JOB 3: DEPLOY TO AWS ECS ---
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Download current task definition
+        run: |
+          aws ecs describe-task-definition --task-definition mern-blog-task --query taskDefinition > task-definition.json
+
+      - name: Update Backend Image in Task Def
+        id: render-backend
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ${{ env.CONTAINER_NAME_BACKEND }}
+          image: ${{ needs.build-and-push.outputs.registry }}/${{ env.ECR_REPOSITORY_BACKEND }}:${{ github.sha }}
+
+      - name: Update Frontend Image in Task Def
+        id: render-frontend
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ steps.render-backend.outputs.task-definition }}
+          container-name: ${{ env.CONTAINER_NAME_FRONTEND }}
+          image: ${{ needs.build-and-push.outputs.registry }}/${{ env.ECR_REPOSITORY_FRONTEND }}:${{ github.sha }}
+
+      - name: Deploy to Amazon ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.render-frontend.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
