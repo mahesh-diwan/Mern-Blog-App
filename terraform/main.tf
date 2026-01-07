@@ -109,7 +109,7 @@ resource "aws_ssm_parameter" "mongo_uri" {
   value = var.mongo_uri
 }
 
-# --- IAM ROLE (Updated with SSM Permissions) ---
+# --- IAM ROLE (Updated with SSM Permissions)  ---
 resource "aws_iam_role" "ecs_task_execution_role" {
   name = "mern-blog-execution-role"
 
