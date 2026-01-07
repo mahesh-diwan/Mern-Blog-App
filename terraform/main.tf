@@ -1,3 +1,5 @@
+
+
 terraform {
   required_providers {
     aws = {
@@ -10,6 +12,13 @@ terraform {
 provider "aws" {
   region = "us-east-1"
 }
+
+variable "mongo_uri" {
+  description = "MongoDB Atlas Connection String"
+  type        = string
+  sensitive   = true # This hides the value from Terraform logs
+}
+
 
 # --- CLUSTER & REPOS ---
 resource "aws_ecs_cluster" "mern_cluster" {
@@ -93,14 +102,11 @@ resource "aws_cloudwatch_log_group" "ecs_logs" {
 }
 
 # --- SECRETS (SSM Parameter for Mongo URI) ---
+
 resource "aws_ssm_parameter" "mongo_uri" {
   name  = "/mern-blog/mongo-uri"
   type  = "SecureString"
-  value = "REPLACE_ME_MANUALLY_IN_CONSOLE" # Terraform won't overwrite after creation
-
-  lifecycle {
-    ignore_changes = [value]
-  }
+  value = var.mongo_uri
 }
 
 # --- IAM ROLE (Updated with SSM Permissions) ---
